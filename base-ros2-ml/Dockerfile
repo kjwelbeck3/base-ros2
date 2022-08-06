@@ -34,7 +34,7 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
   python3-colcon-common-extensions \
   python3-flake8 \
   python3-pip \
-  python3-pytest-cov \dd
+  python3-pytest-cov \
   python3-rosdep \
   python3-setuptools \
   python3-vcstool \
@@ -70,22 +70,22 @@ RUN mkdir -p $ROS_ROOT/src
 WORKDIR $ROS_ROOT
 #RUN wget https://raw.githubusercontent.com/ros2/ros2/foxy/ros2.repos \
 COPY rosinstall-base rosinstall-base
-    && vcs import src < rosinstall-base
+RUN vcs import src < rosinstall-base
 
 # Install ros dependencies with rosdep
 RUN rosdep init && \
     rosdep update && \
-    rosdep install --from-paths src --ignore-src -y --skip-keys "fastcdr rti-connext-dds-5.3.1 urdfdom_headers" 
+    rosdep install --from-paths src --ignore-src -y -r --skip-keys "fastcdr rti-connext-dds-5.3.1 urdfdom_headers" 
 
 
-# Build and source workspace
-RUN colcon build --symlink-install \
-    && echo "source $ROOT_WS/install/local_setup.bash" >> ~/.bashrc
+## Build and source workspace
+#RUN colcon build --symlink-install \
+#    && echo "source $ROOT_WS/install/local_setup.bash" >> ~/.bashrc
 
-# Creating and sourcing an empty overlay where other ros2 packages will be added
-WORKDIR $ROS_WS
-RUN mkdir -p src/  \
-    && colcon build --symlink-install \
-    && sh -c 'echo "source $ROS_WS/install/setup.bash" >> ~/.bashrc
+## Creating and sourcing an empty overlay where other ros2 packages will be added
+#WORKDIR $ROS_WS
+#RUN mkdir -p src/  \
+#    && colcon build --symlink-install \
+#    && sh -c 'echo "source $ROS_WS/install/setup.bash" >> ~/.bashrc
 
 
